@@ -3,12 +3,12 @@
 Returns:
     List: List of reviews for the given dealership
 """
-from cloudant.client import Cloudant
-from cloudant.error import CloudantException
+from ibmcloudant import Cloudant
+from ibmcloudant import CloudantException
 import requests
 
-CONST_IAM_API_KEY = "KSckq24rEj5o71D4BKkZdQBO6DD5oEsx7MgY3ZPbGFAf"
-CONST_COUCH_USERNAME = "75392dc0-56a8-4cb9-b818-786ce311e71a-bluemix"
+CONST_IAM_API_KEY = ""
+CONST_COUCH_USERNAME = ""
 
 def main(param_dict):
     """Main Function
