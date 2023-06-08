@@ -3,12 +3,11 @@
 Returns:
     List: List of reviews for the given dealership
 """
-from ibmcloudant import Cloudant
-from ibmcloudant import CloudantException
 import requests
 
-CONST_IAM_API_KEY = ""
-CONST_COUCH_USERNAME = ""
+from ibm_cloud_sdk_core import ApiException
+from ibmcloudant.cloudant_v1 import CloudantV1
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 
 def main(param_dict):
     """Main Function
@@ -21,17 +20,14 @@ def main(param_dict):
     """
 
     try:
-        client = Cloudant.iam(
-            account_name=CONST_COUCH_USERNAME,
-            api_key=CONST_IAM_API_KEY,
-            connect=True,
-        )
-        print(f"Databases: {client.all_dbs()}")
-    except CloudantException as cloudant_exception:
+        authenticator = IAMAuthenticator(param_dict["IAM_API_KEY"])
+        service = CloudantV1(authenticator = authenticator)
+        service.set_service_url(param_dict["COUCH_URL"])
+    except ApiException as cloudant_exception:
         print("unable to connect")
         return {"error": cloudant_exception}
     except (requests.exceptions.RequestException, ConnectionResetError) as err:
         print("connection error")
         return {"error": err}
-
-    return {"dbs": client.all_dbs()}
+    databases = service.get_all_dbs().get_result()
+    return { "dbs": databases }

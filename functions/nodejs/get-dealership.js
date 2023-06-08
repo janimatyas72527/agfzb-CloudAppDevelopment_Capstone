@@ -4,16 +4,14 @@
 
 const { CloudantV1 } = require('@ibm-cloud/cloudant');
 const { IamAuthenticator } = require('ibm-cloud-sdk-core');
-const IAM_API_KEY=""
-const COUCH_URL=""
 
 async function main(params) {
 
-    const authenticator = new IamAuthenticator({ apikey: IAM_API_KEY })
+    const authenticator = new IamAuthenticator({ apikey: params.IAM_API_KEY })
     const cloudant = CloudantV1.newInstance({
       authenticator: authenticator
     });
-    cloudant.setServiceUrl(COUCH_URL);
+    cloudant.setServiceUrl(params.COUCH_URL);
     return await getDealerships(cloudant, params);
 }
 
