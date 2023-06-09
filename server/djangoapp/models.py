@@ -26,6 +26,7 @@ class CarMake(models.Model):
 # - Any other fields you would like to include in car model
 # - __str__ method to print a car make object
 class CarModel(models.Model):
+    car_make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
     CMP = 'cmp'
     SED = 'sed'
     SUV = 'suv'
@@ -33,30 +34,30 @@ class CarModel(models.Model):
     VAN = 'van'
     CNV = 'cnv'
     CAR_TYPE = [
-        (CMP, 'Compact')
+        (CMP, 'Compact'),
         (SED, 'Sedan'),
         (SUV, 'SUV'),
-        (WAG, 'Wagon')
-        (VAN, 'Van')
-        (CNV, 'Convertible')
+        (WAG, 'Wagon'),
+        (VAN, 'Van'),
+        (CNV, 'Convertible'),
     ]
     name = models.TextField(max_length=32)
-    type = models.CharField(max_length=3, choices=CAR_TYPE, default=CMP)
+    car_type = models.CharField(max_length=3, choices=CAR_TYPE, default=CMP)
     year = models.DateField(default=date.today().year)
 
     def __str__(self):
-        return f'{self.name}-{self.type}-{str(self.year)}'
+        return f'{self.name}-{self.car_type}-{str(self.year)}'
 
 
 # <HINT> Create a plain Python class `CarDealer` to hold dealer data
 class CarDealer:
-    def __init__(self, dealer_id, city, state, st, address, zip, lat, long, short_name, full_name):
+    def __init__(self, dealer_id, city, state, state_short, address, zip_code, lat, long, short_name, full_name):
         self.dealer_id = dealer_id
         self.city = city
         self.state = state
-        self.st = st
+        self.state_short = state_short
         self.address = address
-        self.zip = zip
+        self.zip_code = zip_code
         self.lat = lat
         self.long = long
         self.short_name = short_name
