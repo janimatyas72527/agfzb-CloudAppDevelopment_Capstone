@@ -16,7 +16,7 @@ def get_request(package_name, action_name, params):
 
         headers = {
             'accept': "application/json",
-            'authorization': "<Auth ID>",
+            'authorization': "<Auth Token>",
             'content-type': "application/json"
             }
 
@@ -51,7 +51,7 @@ def get_dealer(json_data):
 # - Parse JSON results into a CarDealer object list
 def get_dealers_from_cf(params):
     result = get_request('dealership-package', 'get-dealership', params)
-    return map(get_dealer, result.dealerships)
+    return map(get_dealer, result['dealerships'])
 
 
 def get_dealer_review(json_data):
