@@ -107,7 +107,8 @@ def get_dealer_details(request, dealer_id):
         # Return a list of dealer short name
         return HttpResponse(review_text)
 
-# Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
-
+# Create an `add_review` view to submit a review
+def add_review(request, dealer_id):
+    context = {}
+    if request.method == "GET":
+        return render(request, 'djangoapp/add_review.html', context)

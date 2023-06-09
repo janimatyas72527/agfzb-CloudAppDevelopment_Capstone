@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.timezone import now
 from datetime import date
+from ibm_watson.natural_language_understanding_v1 import SentimentResult
 
 
 # Create your models here.
@@ -66,7 +67,7 @@ class CarDealer:
 
 # <HINT> Create a plain Python class `DealerReview` to hold review data
 class DealerReview:
-    def __init__(self, review_id, name, dealership, review, purchase, purchase_date, car_make, car_model, car_year ):
+    def __init__(self, review_id, name, dealership, review, purchase, purchase_date, car_make, car_model, car_year, sentiment ):
         self.review_id = review_id
         self.name = name
         self.dealership = dealership
@@ -76,4 +77,5 @@ class DealerReview:
         self.car_make = car_make
         self.car_model = car_model
         self.car_year = car_year
+        self.sentiment = sentiment
 

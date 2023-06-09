@@ -1,7 +1,19 @@
 import json
 import http.client
 from datetime import datetime
+from ibm_watson import NaturalLanguageUnderstandingV1
+from ibm_watson.natural_language_understanding_v1 import Features, SentimentOptions
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from .models import CarDealer, DealerReview
+
+# Disabled NLU processing as on Theia it throws error (due to obsolete dependencies)
+
+# authenticator = IAMAuthenticator('<API Key>', disable_ssl_verification=True)
+# natural_language_understanding = NaturalLanguageUnderstandingV1(
+#     version='2022-04-07',
+#     authenticator=authenticator
+# )
+# natural_language_understanding.set_service_url('<NLU Service URL>')
 
 def to_query_param(item):
     return f'{item[0]}={item[1]}'
@@ -9,11 +21,7 @@ def to_query_param(item):
 def to_query_params(params):
     return '&'.join(map(to_query_param, params.items()))
 
-# Create a `get_request` to make HTTP GET requests
-# e.g., response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
-#                                     auth=HTTPBasicAuth('apikey', api_key))
-
-def get_request(package_name, action_name, params):
+def call_cf_action(package_name, action_name, params):
     try:
         host = 'eu-gb.functions.cloud.ibm.com'
         namespace = '4a329e9a-d171-4f4b-b90c-cbb0435b8cc8'
@@ -53,11 +61,8 @@ def get_dealer(json_data):
         json_data['full_name'])
 
 # Create a get_dealers_from_cf method to get dealers from a cloud function
-# def get_dealers_from_cf(url, **kwargs):
-# - Call get_request() with specified arguments
-# - Parse JSON results into a CarDealer object list
 def get_dealers_from_cf(params):
-    result = get_request('dealership-package', 'get-dealership', params)
+    result = call_cf_action('dealership-package', 'get-dealership', params)
     return map(get_dealer, result['dealerships'])
 
 
@@ -66,6 +71,8 @@ def get_dealer_review(json_data):
         review_id = int(json_data['id'])
     else:
         review_id = -1
+    review = json_data['review']
+    sentiment = analyze_review_sentiments(review)
     purchase = bool(json_data['purchase'])
     if (purchase):
         return DealerReview(
@@ -77,7 +84,8 @@ def get_dealer_review(json_data):
             datetime.strptime(json_data['purchase_date'], '%m/%d/%Y'),
             json_data['car_make'],
             json_data['car_model'],
-            int(json_data['car_year'])
+            int(json_data['car_year']),
+            sentiment
             )
     else:
         return DealerReview(
@@ -89,20 +97,23 @@ def get_dealer_review(json_data):
             None,
             None,
             None,
-            None
+            None,
+            sentiment
             )
 
 # Create a get_dealer_reviews_from_cf method to get reviews by dealer id from a cloud function
-# def get_dealer_by_id_from_cf(url, dealerId):
-# - Call get_request() with specified arguments
-# - Parse JSON results into a DealerView object list
-def get_dealer_review_by_id_from_cf(dealer_id):
-    result = get_request('review-package', 'get-review', {'dealership': dealer_id})
+def get_dealer_review_by_id_from_cf(dealership_id):
+    result = call_cf_action('review-package', 'get-review', {'dealership': dealership_id})
     return map(get_dealer_review, result['reviews'])
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
-# def analyze_review_sentiments(text):
-# - Call get_request() with specified arguments
-# - Get the returned sentiment label such as Positive or Negative
+def analyze_review_sentiments(text):
+    # response = natural_language_understanding.analyze(text=text, \
+    #     Features=Features(sentiment=SentimentOptions(targets=['United States']))).get_result()
+    # return response['sentiment']
+    return None
 
-
+# All information (including dealership id) is within params, so we don't need anything else
+def post_review(params):
+    result = call_cf_action('review-package', 'post-review', params)
+    return result
