@@ -3,6 +3,12 @@ import http.client
 from datetime import datetime
 from .models import CarDealer, DealerReview
 
+def to_query_param(item):
+    return f'{item[0]}={item[1]}'
+
+def to_query_params(params):
+    return '&'.join(map(to_query_param, params.items()))
+
 # Create a `get_request` to make HTTP GET requests
 # e.g., response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
 #                                     auth=HTTPBasicAuth('apikey', api_key))
@@ -16,20 +22,21 @@ def get_request(package_name, action_name, params):
 
         headers = {
             'accept': "application/json",
-            'authorization': "Bearer eyJraWQiOiIyMDIzMDUxMTA4MzEiLCJhbGciOiJSUzI1NiJ9.eyJpYW1faWQiOiJJQk1pZC0zMTAwMDBBUDVYIiwiaWQiOiJJQk1pZC0zMTAwMDBBUDVYIiwicmVhbG1pZCI6IklCTWlkIiwianRpIjoiNTlmMjI4MjYtNTE1OS00MjBlLWFiNjEtYmE1ZDU5YWIzNTMyIiwiaWRlbnRpZmllciI6IjMxMDAwMEFQNVgiLCJnaXZlbl9uYW1lIjoiTWF0eWFzIiwiZmFtaWx5X25hbWUiOiJKYW5pIiwibmFtZSI6Ik1hdHlhcyBKYW5pIiwiZW1haWwiOiJqYW5pLm1hdHlhc0BnbWFpbC5jb20iLCJzdWIiOiJqYW5pLm1hdHlhc0BnbWFpbC5jb20iLCJhdXRobiI6eyJzdWIiOiJqYW5pLm1hdHlhc0BnbWFpbC5jb20iLCJpYW1faWQiOiJJQk1pZC0zMTAwMDBBUDVYIiwibmFtZSI6Ik1hdHlhcyBKYW5pIiwiZ2l2ZW5fbmFtZSI6Ik1hdHlhcyIsImZhbWlseV9uYW1lIjoiSmFuaSIsImVtYWlsIjoiamFuaS5tYXR5YXNAZ21haWwuY29tIn0sImFjY291bnQiOnsidmFsaWQiOnRydWUsImJzcyI6IjVhMzk1ODJkNWE4NjRjYzM5YjYzYzMwY2VlMDU2YmZjIiwiaW1zX3VzZXJfaWQiOiIxMDgxMDQzMyIsImltcyI6IjI2MzI3NTUifSwiaWF0IjoxNjg2MzE2Nzg4LCJleHAiOjE2ODYzMjAzODgsImlzcyI6Imh0dHBzOi8vaWFtLmNsb3VkLmlibS5jb20vaWRlbnRpdHkiLCJncmFudF90eXBlIjoidXJuOmlibTpwYXJhbXM6b2F1dGg6Z3JhbnQtdHlwZTpwYXNzY29kZSIsInNjb3BlIjoiaWJtIG9wZW5pZCIsImNsaWVudF9pZCI6ImJ4IiwiYWNyIjoxLCJhbXIiOlsicHdkIl19.cU4x6eGVlHpkrJam5mrKFksGSWZ5kzEhVyJkB2U-Rkcmp0_GqehmhVPGVrgwoHHX1_shDfrJwS2pmsUcaq3aD8ZUUI_2AOhVnFNal-fjV6gYvRY4Ui7F4lNgko-nE6AcUvRX1jzWnkApokg177lAOxHX4Ws2vksj-Lq3Lx3ZPjpgfm8WrLZGwbDNtkfyoCHEV80lNfdQ7Pz0kXR4oJxYcy9Z1oxyM__yPzXYNQv9rvu3qxureJqu66MIogh9qa8D2X25n2nGWWHuqDXSLsPNNmikPtBolnXEmXeyQ7P_mzpkVHFXn-ABvXXk5kILLR2xTATSzmTmizjFuNS62Vxpjw",
+            'authorization': "Bearer eyJraWQiOiIyMDIzMDUxMTA4MzEiLCJhbGciOiJSUzI1NiJ9.eyJpYW1faWQiOiJJQk1pZC0zMTAwMDBBUDVYIiwiaWQiOiJJQk1pZC0zMTAwMDBBUDVYIiwicmVhbG1pZCI6IklCTWlkIiwianRpIjoiYWJiZmQ4YjItMDcyZC00ZTJlLThkOWMtM2VmMTcxOTEwYTBlIiwiaWRlbnRpZmllciI6IjMxMDAwMEFQNVgiLCJnaXZlbl9uYW1lIjoiTWF0eWFzIiwiZmFtaWx5X25hbWUiOiJKYW5pIiwibmFtZSI6Ik1hdHlhcyBKYW5pIiwiZW1haWwiOiJqYW5pLm1hdHlhc0BnbWFpbC5jb20iLCJzdWIiOiJqYW5pLm1hdHlhc0BnbWFpbC5jb20iLCJhdXRobiI6eyJzdWIiOiJqYW5pLm1hdHlhc0BnbWFpbC5jb20iLCJpYW1faWQiOiJJQk1pZC0zMTAwMDBBUDVYIiwibmFtZSI6Ik1hdHlhcyBKYW5pIiwiZ2l2ZW5fbmFtZSI6Ik1hdHlhcyIsImZhbWlseV9uYW1lIjoiSmFuaSIsImVtYWlsIjoiamFuaS5tYXR5YXNAZ21haWwuY29tIn0sImFjY291bnQiOnsidmFsaWQiOnRydWUsImJzcyI6IjVhMzk1ODJkNWE4NjRjYzM5YjYzYzMwY2VlMDU2YmZjIiwiaW1zX3VzZXJfaWQiOiIxMDgxMDQzMyIsImltcyI6IjI2MzI3NTUifSwiaWF0IjoxNjg2MzE5NzczLCJleHAiOjE2ODYzMjMzNzMsImlzcyI6Imh0dHBzOi8vaWFtLmNsb3VkLmlibS5jb20vaWRlbnRpdHkiLCJncmFudF90eXBlIjoidXJuOmlibTpwYXJhbXM6b2F1dGg6Z3JhbnQtdHlwZTpwYXNzY29kZSIsInNjb3BlIjoiaWJtIG9wZW5pZCIsImNsaWVudF9pZCI6ImJ4IiwiYWNyIjoxLCJhbXIiOlsicHdkIl19.beEz2w3iOXcBwkdql-VAETMqbYq7WRPBP0BnTx94F5IcQVzR3mpyms0GQKJYObp9xjHIS1OGDLf3mSUZfm7xN_ERYZk7Qm7W0e5g8xmZw5Ah0C4RLILrKohAJ-y7_EZwTPJNk2QS1-DLNlvjgsn9_FEoUr3WoKpoAlAsrYvZuBITjL_jQdieBrKK22h4_u5ZhxJaG9TgYe1FdCeX2KXZx50-YMdWxAt3YdnDFo8ckSL8zynheyAx3S_Tcpq9TI-9Qf7ZyFOhbEXA8XtmllBkzXX1uUnbtLj9k63CFJf-mgBwELlqATdHfrQVAX0dHM7QBr498EhEVM0VsBsfEs-6OQ",
             'content-type': "application/json"
             }
 
-        conn.request("POST", f"/api/v1/namespaces/{namespace}/actions/{package_name}/{action_name}?blocking=true&result=true", headers=headers, body=params)
+        query_params = { 'blocking': 'true', 'result': 'true' }
+
+        body = json.dumps(params, indent=4)
+
+        conn.request("POST", f"/api/v1/namespaces/{namespace}/actions/{package_name}/{action_name}?{to_query_params(query_params)}", headers=headers, body=body)
         response = conn.getresponse()
     except:
         # If any error occurs
         print("Network exception occurred")
     json_data = json.loads(response.readline())
     return json_data
-
-# Create a `post_request` to make HTTP POST requests
-# e.g., response = requests.post(url, params=kwargs, json=payload)
 
 
 def get_dealer(json_data):
@@ -90,7 +97,7 @@ def get_dealer_review(json_data):
 # - Call get_request() with specified arguments
 # - Parse JSON results into a DealerView object list
 def get_dealer_review_by_id_from_cf(dealer_id):
-    result = get_request('review-package', 'get-review', {})
+    result = get_request('review-package', 'get-review', {'dealership': dealer_id})
     return map(get_dealer_review, result['reviews'])
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
