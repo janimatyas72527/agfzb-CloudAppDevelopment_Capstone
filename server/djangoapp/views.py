@@ -2,14 +2,14 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-# from .models import related models
+from .models import CarModel
 # from .restapis import related methods
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
 import logging
 import json
-from .restapis import get_dealers_from_cf, get_dealer_review_by_id_from_cf
+from .restapis import get_dealers_from_cf, get_dealer_review_by_id_from_cf, post_review
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -103,12 +103,22 @@ def get_dealer_details(request, dealer_id, dealer_name):
         # Get reviews based on id
         reviews = get_dealer_review_by_id_from_cf(dealer_id)
         #
-        context = { 'dealer_name': dealer_name, 'review_list': reviews }
+        context = { 'dealer_id': dealer_id, 'dealer_name': dealer_name, 'review_list': reviews }
         #
         return render(request, 'djangoapp/dealer_details.html', context)
 
+
+
 # Create an `add_review` view to submit a review
-def add_review(request):
-    context = {}
+def add_review(request, dealer_id, dealer_name):
+    cars = CarModel.objects.all()
+    context = { 'cars': cars, 'dealer_id': dealer_id, 'dealer_name': dealer_name }
     if request.method == "GET":
         return render(request, 'djangoapp/add_review.html', context)
+
+
+# Create a `submit_review` view to submit a review
+def submit_review(request, dealer_id, dealer_name):
+    if request.method == "POST":
+        post_review(request.body)
+        return HttpResponseRedirect('djangoapp/dealer_details.html', dealer_id, dealer_name)
