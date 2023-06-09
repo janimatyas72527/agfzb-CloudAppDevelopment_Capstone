@@ -64,6 +64,11 @@ class CarDealer:
         self.short_name = short_name
         self.full_name = full_name
 
+def sentiment_type(sentiment):
+    if (sentiment != None and 'document' and sentiment & 'label' and sentiment['document']):
+        return sentiment['document']['label']
+    else:
+        return "neutral"
 
 # <HINT> Create a plain Python class `DealerReview` to hold review data
 class DealerReview:
@@ -78,4 +83,5 @@ class DealerReview:
         self.car_model = car_model
         self.car_year = car_year
         self.sentiment = sentiment
+        self.sentiment_type = sentiment_type(sentiment)
 
